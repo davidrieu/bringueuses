@@ -167,14 +167,32 @@ function bringueuses_get_modal_css() {
             background: none;
             border: none;
             cursor: pointer;
-            padding: 5px;
-            font-size: 14px;
-            color: #666;
-            transition: transform 0.3s;
+            padding: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.3s ease, background-color 0.2s ease;
+            border-radius: 4px;
+            width: 32px;
+            height: 32px;
         }
 
-        .bringueuses-category-toggle.expanded {
+        .bringueuses-category-toggle:hover {
+            background-color: rgba(194, 153, 72, 0.1);
+        }
+
+        .bringueuses-category-toggle svg {
+            width: 16px;
+            height: 16px;
+            transition: transform 0.3s ease;
+            stroke: #666;
+            stroke-width: 2;
+            fill: none;
+        }
+
+        .bringueuses-category-toggle.expanded svg {
             transform: rotate(90deg);
+            stroke: #c29948;
         }
 
         /* Sous-catégories */
@@ -589,7 +607,11 @@ function bringueuses_get_modal_html() {
             $html .= '</label>';
 
             if (!empty($subcategories) && !is_wp_error($subcategories)) {
-                $html .= '<button class="bringueuses-category-toggle" aria-label="Afficher les sous-catégories">▶</button>';
+                $html .= '<button class="bringueuses-category-toggle" aria-label="Afficher les sous-catégories">';
+                $html .= '<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">';
+                $html .= '<polyline points="9 6 15 12 9 18" stroke-linecap="round" stroke-linejoin="round"/>';
+                $html .= '</svg>';
+                $html .= '</button>';
             }
 
             $html .= '</div>'; // .bringueuses-category-parent
