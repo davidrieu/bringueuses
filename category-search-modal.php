@@ -6,16 +6,16 @@
 
 // Enqueue les scripts et styles personnalisés
 function bringueuses_category_search_modal_assets() {
-    // Enqueue le CSS
-    wp_add_inline_style('wp-admin', bringueuses_get_modal_css());
-
-    // Si vous avez un style frontend, utilisez plutôt :
-    // wp_enqueue_style('bringueuses-modal', get_stylesheet_directory_uri() . '/css/category-modal.css');
-
     // Enqueue le JavaScript
     wp_add_inline_script('jquery', bringueuses_get_modal_js());
 }
 add_action('wp_enqueue_scripts', 'bringueuses_category_search_modal_assets');
+
+// Injecter le CSS directement dans le footer (solution fiable)
+function bringueuses_inject_modal_css() {
+    echo bringueuses_get_modal_css();
+}
+add_action('wp_footer', 'bringueuses_inject_modal_css', 999);
 
 // Fonction pour obtenir le CSS de la modal
 function bringueuses_get_modal_css() {
