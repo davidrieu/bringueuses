@@ -584,9 +584,10 @@ function bringueuses_get_modal_js() {
 // Fonction pour générer le HTML de la modal
 function bringueuses_get_modal_html() {
     // Récupérer les catégories (taxonomy 'listing_category')
+    // IMPORTANT: hide_empty => true pour n'afficher que les catégories avec des annonces
     $categories = get_terms(array(
         'taxonomy' => 'listing_category',
-        'hide_empty' => false,
+        'hide_empty' => true, // N'afficher que les catégories avec annonces
         'parent' => 0, // Seulement les catégories parentes
     ));
 
@@ -617,9 +618,10 @@ function bringueuses_get_modal_html() {
             $html .= '</label>';
 
             // Récupérer les sous-catégories
+            // N'afficher que les sous-catégories avec des annonces
             $subcategories = get_terms(array(
                 'taxonomy' => 'listing_category',
-                'hide_empty' => false,
+                'hide_empty' => true, // N'afficher que les sous-catégories avec annonces
                 'parent' => $category->term_id,
             ));
 
