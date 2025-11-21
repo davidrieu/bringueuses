@@ -270,45 +270,9 @@ function bringueuses_get_modal_css() {
             background-color: #a67e3a;
         }
 
-        /* Masquer complètement Bootstrap Select */
-        .select-taxonomy .bootstrap-select {
+        /* Masquer uniquement le Bootstrap Select des catégories (tax-listing_category) */
+        #listeo-search-form_tax-listing_category .bootstrap-select {
             display: none !important;
-        }
-
-        /* Bouton personnalisé */
-        .bringueuses-custom-trigger {
-            width: 100%;
-            padding: 10px 15px;
-            text-align: left;
-            background-color: white;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            cursor: pointer;
-            display: flex !important;
-            justify-content: space-between;
-            align-items: center;
-            transition: border-color 0.2s, box-shadow 0.2s;
-        }
-
-        .bringueuses-custom-trigger:hover {
-            border-color: #999;
-        }
-
-        .bringueuses-custom-trigger:focus {
-            outline: none;
-            border-color: #c29948;
-            box-shadow: 0 0 0 3px rgba(194, 153, 72, 0.1);
-        }
-
-        .bringueuses-custom-trigger .filter-option {
-            flex: 1;
-        }
-
-        .bringueuses-custom-trigger .caret {
-            margin-left: 10px;
-            border-top: 4px solid #333;
-            border-right: 4px solid transparent;
-            border-left: 4px solid transparent;
         }
 
         /* Responsive */
@@ -361,41 +325,26 @@ function bringueuses_get_modal_js() {
             console.log('Overlay trouvé:', \$overlay.length);
             console.log('Select original trouvé:', \$originalSelect.length);
 
-            // SOLUTION: Cacher Bootstrap Select et créer notre propre bouton
-            console.log('Masquage de Bootstrap Select et création du bouton personnalisé');
+            // SOLUTION: Cacher uniquement le Bootstrap Select des catégories et créer notre bouton
+            console.log('Masquage du Bootstrap Select des catégories et création du bouton personnalisé');
 
-            // Cacher complètement Bootstrap Select
-            $('.select-taxonomy .bootstrap-select').hide();
-            $('.select-taxonomy .dropdown-menu').hide();
+            // Cacher uniquement le Bootstrap Select du champ tax-listing_category
+            var \$categoryContainer = $('#listeo-search-form_tax-listing_category');
+            \$categoryContainer.find('.bootstrap-select').hide();
+            \$categoryContainer.find('.dropdown-menu').hide();
 
-            // Créer notre propre bouton
+            // Créer un bouton qui ressemble exactement au Bootstrap Select original
             var customButton = $('<button>', {
                 type: 'button',
-                class: 'bringueuses-custom-trigger btn btn-default',
-                html: '<span class=\"filter-option pull-left\">Que recherchez-vous ?</span> <span class=\"caret\"></span>',
-                css: {
-                    width: '100%',
-                    padding: '10px 15px',
-                    textAlign: 'left',
-                    backgroundColor: 'white',
-                    border: '1px solid #ccc',
-                    borderRadius: '4px',
-                    cursor: 'pointer',
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center'
-                }
+                class: 'btn dropdown-toggle btn-default',
+                html: '<span class=\"filter-option pull-left\">Que recherchez-vous ?</span>&nbsp;<span class=\"bs-caret\"><span class=\"caret\"></span></span>'
             });
 
-            // Insérer le bouton dans le premier .select-taxonomy qui contient le select #tax-listing_category
-            var \$targetContainer = \$originalSelect.closest('.select-taxonomy');
-            if (\$targetContainer.length === 0) {
-                \$targetContainer = $('.select-taxonomy').first();
-            }
-            \$targetContainer.prepend(customButton);
-            console.log('Bouton personnalisé créé et inséré');
+            // Insérer le bouton dans le container des catégories uniquement
+            \$categoryContainer.prepend(customButton);
+            console.log('Bouton personnalisé créé et inséré dans le container des catégories');
 
-            var \$customBtn = $('.bringueuses-custom-trigger');
+            var \$customBtn = \$categoryContainer.find('.dropdown-toggle').first();
 
             // Clic sur le bouton personnalisé
             \$customBtn.on('click', function(e) {
