@@ -141,6 +141,12 @@ function bringueuses_get_modal_css() {
             gap: 8px;
             font-weight: 600;
             color: #000;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .bringueuses-category-name:hover {
+            color: #007bff;
         }
 
         .bringueuses-category-count {
@@ -203,6 +209,12 @@ function bringueuses_get_modal_css() {
             align-items: center;
             gap: 8px;
             color: #333;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .bringueuses-subcategory-name:hover {
+            color: #007bff;
         }
 
         /* Footer de la modal */
@@ -438,7 +450,14 @@ function bringueuses_get_modal_js() {
                 }
             });
 
-            // Toggle des sous-catégories
+            // Rendre le titre de la catégorie cliquable pour cocher/décocher
+            $('.bringueuses-category-name, .bringueuses-subcategory-name').on('click', function(e) {
+                e.stopPropagation();
+                var \$checkbox = $(this).closest('label').find('input[type=\"checkbox\"]');
+                \$checkbox.prop('checked', !\$checkbox.prop('checked')).trigger('change');
+            });
+
+            // Toggle des sous-catégories avec la flèche
             $('.bringueuses-category-toggle').on('click', function(e) {
                 e.stopPropagation();
                 var \$subcats = $(this).closest('.bringueuses-category-item').find('.bringueuses-subcategories');
@@ -446,22 +465,19 @@ function bringueuses_get_modal_js() {
                 $(this).toggleClass('expanded');
             });
 
-            // Gestion des checkboxes parent
+            // Gestion des checkboxes parent : déplier automatiquement quand on coche
             $('.bringueuses-category-parent input[type=\"checkbox\"]').on('change', function() {
                 var \$parent = $(this).closest('.bringueuses-category-item');
-                var \$subcatCheckboxes = \$parent.find('.bringueuses-subcategories input[type=\"checkbox\"]');
-                \$subcatCheckboxes.prop('checked', this.checked);
-            });
+                var \$subcats = \$parent.find('.bringueuses-subcategories');
+                var \$toggle = \$parent.find('.bringueuses-category-toggle');
 
-            // Gestion des checkboxes enfant
-            $('.bringueuses-subcategory-label input[type=\"checkbox\"]').on('change', function() {
-                var \$parent = $(this).closest('.bringueuses-category-item');
-                var \$parentCheckbox = \$parent.find('.bringueuses-category-parent input[type=\"checkbox\"]');
-                var \$subcatCheckboxes = \$parent.find('.bringueuses-subcategories input[type=\"checkbox\"]');
-
-                // Si tous les enfants sont cochés, cocher le parent
-                var allChecked = \$subcatCheckboxes.length === \$subcatCheckboxes.filter(':checked').length;
-                \$parentCheckbox.prop('checked', allChecked);
+                // Si on coche la catégorie parent ET qu'il y a des sous-catégories
+                if (this.checked && \$subcats.length > 0) {
+                    // Déplier les sous-catégories
+                    \$subcats.addClass('expanded');
+                    \$toggle.addClass('expanded');
+                }
+                // Note: On ne coche PAS automatiquement les sous-catégories
             });
 
             // Effacer toutes les sélections
