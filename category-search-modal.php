@@ -132,12 +132,12 @@ function bringueuses_get_modal_css() {
             height: 18px;
             cursor: pointer;
             margin: 0;
-            accent-color: #007bff;
+            accent-color: #000000;
             flex-shrink: 0;
         }
 
         .bringueuses-category-label input[type="checkbox"]:checked + .bringueuses-category-name {
-            color: #007bff;
+            color: #000000;
             font-weight: 700;
         }
 
@@ -152,7 +152,7 @@ function bringueuses_get_modal_css() {
         }
 
         .bringueuses-category-name:hover {
-            color: #007bff;
+            color: #c29948;
         }
 
         .bringueuses-category-count {
@@ -207,12 +207,12 @@ function bringueuses_get_modal_css() {
             height: 18px;
             cursor: pointer;
             margin: 0;
-            accent-color: #007bff;
+            accent-color: #000000;
             flex-shrink: 0;
         }
 
         .bringueuses-subcategory-label input[type="checkbox"]:checked + .bringueuses-subcategory-name {
-            color: #007bff;
+            color: #000000;
             font-weight: 600;
         }
 
@@ -226,7 +226,7 @@ function bringueuses_get_modal_css() {
         }
 
         .bringueuses-subcategory-name:hover {
-            color: #007bff;
+            color: #c29948;
         }
 
         /* Footer de la modal */
@@ -243,7 +243,7 @@ function bringueuses_get_modal_css() {
         .bringueuses-clear-btn {
             background: none;
             border: none;
-            color: #007bff;
+            color: #c29948;
             text-decoration: underline;
             cursor: pointer;
             font-size: 14px;
@@ -251,11 +251,11 @@ function bringueuses_get_modal_css() {
         }
 
         .bringueuses-clear-btn:hover {
-            color: #0056b3;
+            color: #a67e3a;
         }
 
         .bringueuses-submit-btn {
-            background-color: #007bff;
+            background-color: #c29948;
             color: white;
             border: none;
             padding: 10px 24px;
@@ -267,7 +267,7 @@ function bringueuses_get_modal_css() {
         }
 
         .bringueuses-submit-btn:hover {
-            background-color: #0056b3;
+            background-color: #a67e3a;
         }
 
         /* Masquer complètement Bootstrap Select */
@@ -296,8 +296,8 @@ function bringueuses_get_modal_css() {
 
         .bringueuses-custom-trigger:focus {
             outline: none;
-            border-color: #007bff;
-            box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+            border-color: #c29948;
+            box-shadow: 0 0 0 3px rgba(194, 153, 72, 0.1);
         }
 
         .bringueuses-custom-trigger .filter-option {
@@ -671,7 +671,7 @@ function bringueuses_get_modal_html() {
     // Footer
     $html .= '<div class="bringueuses-modal-footer">';
     $html .= '<button class="bringueuses-clear-btn">Effacer</button>';
-    $html .= '<button class="bringueuses-submit-btn">Afficher les résultats</button>';
+    $html .= '<button class="bringueuses-submit-btn">Sélectionner</button>';
     $html .= '</div>';
 
     $html .= '</div>'; // .bringueuses-category-modal
