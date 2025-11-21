@@ -379,22 +379,42 @@ function bringueuses_get_modal_js() {
                 e.preventDefault();
                 e.stopPropagation();
 
-                // Ouvrir la modal
-                \$overlay.addClass('active');
-                \$modal.addClass('active');
+                // FORCER LES STYLES EN JAVASCRIPT (ultra-robuste)
+                \$overlay.css({
+                    'display': 'block',
+                    'position': 'fixed',
+                    'top': '0',
+                    'left': '0',
+                    'width': '100%',
+                    'height': '100%',
+                    'background-color': 'rgba(0, 0, 0, 0.5)',
+                    'z-index': '999998',
+                    'opacity': '1'
+                });
+
+                \$modal.css({
+                    'display': 'block',
+                    'position': 'fixed',
+                    'top': '50%',
+                    'left': '50%',
+                    'transform': 'translate(-50%, -50%)',
+                    'max-width': '800px',
+                    'width': '90%',
+                    'max-height': '90vh',
+                    'background': 'white',
+                    'border-radius': '8px',
+                    'box-shadow': '0 10px 40px rgba(0, 0, 0, 0.2)',
+                    'z-index': '999999',
+                    'opacity': '1'
+                });
+
                 $('body').css('overflow', 'hidden');
-                console.log('Modal ouverte');
+
+                console.log('Modal ouverte avec styles forcés');
                 console.log('Modal visible:', \$modal.is(':visible'));
                 console.log('Overlay visible:', \$overlay.is(':visible'));
-
-                // Debug CSS
                 console.log('Z-index modal:', \$modal.css('z-index'));
-                console.log('Z-index overlay:', \$overlay.css('z-index'));
                 console.log('Position modal:', \$modal.css('position'));
-                console.log('Top modal:', \$modal.css('top'));
-                console.log('Left modal:', \$modal.css('left'));
-                console.log('Display modal:', \$modal.css('display'));
-                console.log('Opacity modal:', \$modal.css('opacity'));
 
                 return false;
             });
@@ -402,9 +422,10 @@ function bringueuses_get_modal_js() {
 
             // Fermer la modal
             function closeModal() {
-                \$overlay.removeClass('active');
-                \$modal.removeClass('active');
+                \$overlay.css('display', 'none');
+                \$modal.css('display', 'none');
                 $('body').css('overflow', '');
+                console.log('Modal fermée');
             }
 
             \$closeBtn.on('click', closeModal);
