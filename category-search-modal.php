@@ -500,31 +500,13 @@ function bringueuses_get_modal_js() {
             \$submitBtn.on('click', function(e) {
                 e.preventDefault();
 
-                // Récupérer toutes les catégories sélectionnées (en excluant les parents si des enfants sont sélectionnés)
+                // Récupérer toutes les catégories sélectionnées
                 var selectedValues = [];
-
-                // Pour chaque catégorie principale
-                $('.bringueuses-category-item').each(function() {
-                    var \$categoryItem = $(this);
-                    var \$parentCheckbox = \$categoryItem.find('.bringueuses-category-parent input[type=\"checkbox\"]');
-                    var \$subCheckboxes = \$categoryItem.find('.bringueuses-subcategory-label input[type=\"checkbox\"]:checked');
-
-                    // Si des sous-catégories sont cochées, on prend SEULEMENT les sous-catégories
-                    if (\$subCheckboxes.length > 0) {
-                        \$subCheckboxes.each(function() {
-                            var value = $(this).val();
-                            var label = $(this).closest('label').find('span').first().text();
-                            selectedValues.push(value);
-                            console.log('Sous-catégorie sélectionnée:', label, '- Valeur:', value);
-                        });
-                    }
-                    // Sinon, si le parent est coché (sans enfants), on prend le parent
-                    else if (\$parentCheckbox.is(':checked')) {
-                        var value = \$parentCheckbox.val();
-                        var label = \$parentCheckbox.closest('label').find('span').first().text();
-                        selectedValues.push(value);
-                        console.log('Catégorie parente sélectionnée:', label, '- Valeur:', value);
-                    }
+                $('.bringueuses-category-modal input[type=\"checkbox\"]:checked').each(function() {
+                    var value = $(this).val();
+                    var label = $(this).closest('label').find('span').first().text();
+                    selectedValues.push(value);
+                    console.log('Catégorie sélectionnée:', label, '- Valeur:', value);
                 });
 
                 console.log('=== VALEURS ENVOYÉES AU FORMULAIRE ===');
