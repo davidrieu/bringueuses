@@ -247,7 +247,18 @@ function bringueuses_get_modal_css() {
         }
 
         /* Empecher ouverture du dropdown Bootstrap Select */
-        .select-taxonomy .bootstrap-select.open .dropdown-menu {
+        .select-taxonomy .bootstrap-select .dropdown-menu,
+        .select-taxonomy .bootstrap-select.open .dropdown-menu,
+        .select-taxonomy.bringueuses-disabled .dropdown-menu {
+            display: none !important;
+            visibility: hidden !important;
+            opacity: 0 !important;
+            pointer-events: none !important;
+        }
+
+        /* Empêcher le dropdown même avec classes Bootstrap */
+        .select-taxonomy .dropdown-menu.open,
+        .select-taxonomy .dropdown-menu.show {
             display: none !important;
         }
 
@@ -291,14 +302,32 @@ function bringueuses_get_modal_js() {
             var \$submitBtn = $('.bringueuses-submit-btn');
             var \$originalSelect = $('#tax-listing_category');
 
-            // Intercepter le clic sur le bouton Bootstrap Select existant
-            \$existingBtn.on('click', function(e) {
+            // Désactiver complètement Bootstrap Select et intercepter tous les clics
+            // Supprimer tous les handlers existants de Bootstrap Select
+            \$existingBtn.off('click');
+            $('.select-taxonomy .bootstrap-select').off('click');
+
+            // Empêcher l'initialisation de Bootstrap Select
+            $('.select-taxonomy .bootstrap-select').removeClass('open').addClass('bringueuses-disabled');
+            $('.select-taxonomy .dropdown-menu').hide();
+
+            // Surveiller et fermer le dropdown s'il s'ouvre quand même
+            setInterval(function() {
+                if ($('.select-taxonomy .bootstrap-select').hasClass('open')) {
+                    $('.select-taxonomy .bootstrap-select').removeClass('open');
+                    $('.select-taxonomy .dropdown-menu').hide();
+                }
+            }, 100);
+
+            // Intercepter le clic sur le bouton ET sur le container
+            $('.select-taxonomy .bootstrap-select, .select-taxonomy .btn.dropdown-toggle').on('click', function(e) {
                 e.preventDefault();
                 e.stopPropagation();
+                e.stopImmediatePropagation();
 
                 // Empecher ouverture du dropdown Bootstrap
                 $(this).closest('.bootstrap-select').removeClass('open');
-                $('.bootstrap-select .dropdown-menu').removeClass('open');
+                $('.bootstrap-select .dropdown-menu').removeClass('open').hide();
 
                 // Ouvrir la modal
                 \$overlay.addClass('active');
