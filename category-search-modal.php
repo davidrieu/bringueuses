@@ -320,11 +320,11 @@ function bringueuses_get_modal_js() {
     jQuery(document).ready(function($) {
         console.log('=== BRINGUEUSES DEBUG ===');
         console.log('jQuery chargé:', typeof jQuery !== 'undefined');
-        console.log('Nombre de .select-taxonomy trouvés:', $('.select-taxonomy').length);
+        console.log('Nombre de #tax-listing_category trouvés:', $('#tax-listing_category').length);
 
-        // Créer et injecter la modal dans le DOM
-        if ($('.select-taxonomy').length && !$('#bringueuses-category-modal').length) {
-            console.log('Condition validée - Injection de la modal');
+        // ETAPE 1: Créer la modal une seule fois dans le DOM
+        if (!$('#bringueuses-category-modal').length) {
+            console.log('Création de la modal (première fois)');
 
             // Injecter la modal dans le body
             $('body').append('" . addslashes(bringueuses_get_modal_html()) . "');
@@ -524,11 +524,13 @@ function bringueuses_get_modal_js() {
 
                 console.log('Select WordPress mis à jour avec:', \$originalSelect.val());
 
-                // Mettre à jour le texte du bouton personnalisé
+                // Mettre à jour le texte du bouton personnalisé (recherche dynamique)
+                var \$currentCustomBtn = $('.bringueuses-custom-select .dropdown-toggle');
+                var currentTitle = \$originalSelect.attr('title') || 'Que recherchez-vous ?';
                 if (selectedValues.length > 0) {
-                    \$customBtn.find('.filter-option').text(selectedValues.length + ' catégorie(s) sélectionnée(s)');
+                    \$currentCustomBtn.find('.filter-option').text(selectedValues.length + ' catégorie(s) sélectionnée(s)');
                 } else {
-                    \$customBtn.find('.filter-option').text(originalTitle);
+                    \$currentCustomBtn.find('.filter-option').text(currentTitle);
                 }
 
                 // Déclencher l'événement change sur le select original pour que le formulaire de recherche fonctionne
@@ -547,11 +549,116 @@ function bringueuses_get_modal_js() {
             }
 
             console.log('=== INITIALISATION TERMINEE ===');
-        } else {
-            console.error('ERREUR: Conditions non remplies');
-            console.log('.select-taxonomy existe:', $('.select-taxonomy').length > 0);
-            console.log('Modal déjà présente:', $('#bringueuses-category-modal').length > 0);
         }
+
+        // ETAPE 2: Initialiser le bouton custom (même si modal existe déjà)
+        // Cette fonction peut être appelée plusieurs fois en toute sécurité
+        function initCustomButton() {
+            var \$categoryContainer = $('#listeo-search-form_tax-listing_category');
+
+            if (!\$categoryContainer.length) {
+                console.log('Pas de container de catégories sur cette page');
+                return;
+            }
+
+            // Vérifier si le bouton custom existe déjà
+            if (\$categoryContainer.find('.bringueuses-custom-select').length) {
+                console.log('Bouton custom déjà existant, rien à faire');
+                return;
+            }
+
+            console.log('=== CREATION DU BOUTON CUSTOM ===');
+
+            var \$originalSelect = $('#tax-listing_category');
+            if (!\$originalSelect.length) {
+                console.log('Select #tax-listing_category introuvable');
+                return;
+            }
+
+            var originalTitle = \$originalSelect.attr('title') || 'Que recherchez-vous ?';
+            console.log('Titre:', originalTitle);
+
+            // Masquer le Bootstrap Select original
+            \$categoryContainer.find('.bootstrap-select:not(.bringueuses-custom-select)').hide();
+            \$categoryContainer.find('.dropdown-menu').hide();
+
+            // Créer le bouton custom
+            var customButtonHtml = '<div class=\"btn-group bootstrap-select show-tick bringueuses-custom-select\">' +
+                '<button type=\"button\" class=\"btn dropdown-toggle bs-placeholder btn-default\">' +
+                '<span class=\"filter-option pull-left\">' + originalTitle + '</span>&nbsp;' +
+                '<span class=\"bs-caret\"><span class=\"caret\"></span></span>' +
+                '</button>' +
+                '</div>';
+
+            \$categoryContainer.prepend(customButtonHtml);
+            console.log('Bouton custom créé');
+
+            // Attacher l'événement de clic
+            var \$customBtn = \$categoryContainer.find('.bringueuses-custom-select .dropdown-toggle');
+            \$customBtn.on('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+
+                var \$modal = $('#bringueuses-category-modal');
+                var \$overlay = $('#bringueuses-modal-overlay');
+
+                // Forcer l'affichage de la modal
+                \$overlay.css({
+                    'display': 'block',
+                    'position': 'fixed',
+                    'top': '0',
+                    'left': '0',
+                    'width': '100%',
+                    'height': '100%',
+                    'background-color': 'rgba(0, 0, 0, 0.5)',
+                    'z-index': '999998',
+                    'opacity': '1'
+                });
+
+                \$modal.css({
+                    'display': 'block',
+                    'position': 'fixed',
+                    'top': '50%',
+                    'left': '50%',
+                    'transform': 'translate(-50%, -50%)',
+                    'max-width': '800px',
+                    'width': '90%',
+                    'max-height': '90vh',
+                    'background': 'white',
+                    'border-radius': '8px',
+                    'box-shadow': '0 10px 40px rgba(0, 0, 0, 0.2)',
+                    'z-index': '999999',
+                    'opacity': '1'
+                });
+
+                $('body').css('overflow', 'hidden');
+                console.log('Modal ouverte depuis bouton custom');
+            });
+
+            // Initialiser les valeurs déjà sélectionnées
+            var currentValues = \$originalSelect.val() || [];
+            if (currentValues.length > 0) {
+                $('.bringueuses-category-modal input[type=\"checkbox\"]').prop('checked', false);
+                currentValues.forEach(function(value) {
+                    $('.bringueuses-category-modal input[value=\"' + value + '\"]').prop('checked', true);
+                });
+                \$customBtn.find('.filter-option').text(currentValues.length + ' catégorie(s) sélectionnée(s)');
+                console.log('Valeurs pré-sélectionnées:', currentValues);
+            }
+
+            console.log('=== BOUTON CUSTOM PRET ===');
+        }
+
+        // Appeler l'initialisation du bouton custom
+        initCustomButton();
+
+        // Ré-initialiser après navigation AJAX (si le contenu change)
+        $(document).ajaxComplete(function() {
+            console.log('Ajax complete - vérification du bouton custom');
+            setTimeout(function() {
+                initCustomButton();
+            }, 300);
+        });
     });
     ";
 }
