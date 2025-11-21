@@ -24,44 +24,44 @@ function bringueuses_get_modal_css() {
         /* Overlay de la modal */
         .bringueuses-modal-overlay {
             display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            z-index: 9998;
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            width: 100% !important;
+            height: 100% !important;
+            background-color: rgba(0, 0, 0, 0.5) !important;
+            z-index: 999998 !important;
             opacity: 0;
             transition: opacity 0.3s ease;
         }
 
         .bringueuses-modal-overlay.active {
-            display: block;
-            opacity: 1;
+            display: block !important;
+            opacity: 1 !important;
         }
 
         /* Container de la modal */
         .bringueuses-category-modal {
             display: none;
-            position: fixed;
-            top: 50%;
-            left: 50%;
+            position: fixed !important;
+            top: 50% !important;
+            left: 50% !important;
             transform: translate(-50%, -50%) scale(0.9);
             max-width: 800px;
             width: 90%;
             max-height: 90vh;
-            background: white;
+            background: white !important;
             border-radius: 8px;
             box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
-            z-index: 9999;
+            z-index: 999999 !important;
             opacity: 0;
             transition: all 0.3s ease;
         }
 
         .bringueuses-category-modal.active {
-            display: block;
-            opacity: 1;
-            transform: translate(-50%, -50%) scale(1);
+            display: block !important;
+            opacity: 1 !important;
+            transform: translate(-50%, -50%) scale(1) !important;
         }
 
         /* Header de la modal */
@@ -386,6 +386,15 @@ function bringueuses_get_modal_js() {
                 console.log('Modal ouverte');
                 console.log('Modal visible:', \$modal.is(':visible'));
                 console.log('Overlay visible:', \$overlay.is(':visible'));
+
+                // Debug CSS
+                console.log('Z-index modal:', \$modal.css('z-index'));
+                console.log('Z-index overlay:', \$overlay.css('z-index'));
+                console.log('Position modal:', \$modal.css('position'));
+                console.log('Top modal:', \$modal.css('top'));
+                console.log('Left modal:', \$modal.css('left'));
+                console.log('Display modal:', \$modal.css('display'));
+                console.log('Opacity modal:', \$modal.css('opacity'));
 
                 return false;
             });
