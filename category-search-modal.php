@@ -348,14 +348,20 @@ function bringueuses_get_modal_js() {
 
             // Cacher uniquement le Bootstrap Select original du champ tax-listing_category
             var \$categoryContainer = $('#listeo-search-form_tax-listing_category');
-            \$categoryContainer.find('.bootstrap-select:not(.bringueuses-custom-select)').hide();
+            var \$originalBootstrapSelect = \$categoryContainer.find('.bootstrap-select:not(.bringueuses-custom-select)');
+
+            // Récupérer le titre original du select pour l'universalité
+            var originalTitle = \$originalSelect.attr('title') || 'Que recherchez-vous ?';
+            console.log('Titre original du select:', originalTitle);
+
+            \$originalBootstrapSelect.hide();
             \$categoryContainer.find('.dropdown-menu').hide();
 
             // Créer une structure complète Bootstrap Select pour apparence identique
             var customButtonHtml = '<div class=\"btn-group bootstrap-select show-tick bringueuses-custom-select\">' +
                 '<button type=\"button\" class=\"btn dropdown-toggle bs-placeholder btn-default\" ' +
-                'data-toggle=\"dropdown\" role=\"button\" title=\"Que recherchez-vous ?\">' +
-                '<span class=\"filter-option pull-left\">Que recherchez-vous ?</span>&nbsp;' +
+                'data-toggle=\"dropdown\" role=\"button\" title=\"' + originalTitle + '\">' +
+                '<span class=\"filter-option pull-left\">' + originalTitle + '</span>&nbsp;' +
                 '<span class=\"bs-caret\"><span class=\"caret\"></span></span>' +
                 '</button>' +
                 '</div>';
@@ -522,7 +528,7 @@ function bringueuses_get_modal_js() {
                 if (selectedValues.length > 0) {
                     \$customBtn.find('.filter-option').text(selectedValues.length + ' catégorie(s) sélectionnée(s)');
                 } else {
-                    \$customBtn.find('.filter-option').text('Que recherchez-vous ?');
+                    \$customBtn.find('.filter-option').text(originalTitle);
                 }
 
                 // Déclencher l'événement change sur le select original pour que le formulaire de recherche fonctionne
