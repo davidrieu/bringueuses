@@ -270,8 +270,8 @@ function bringueuses_get_modal_css() {
             background-color: #a67e3a;
         }
 
-        /* Masquer uniquement le Bootstrap Select des catégories (tax-listing_category) */
-        #listeo-search-form_tax-listing_category .bootstrap-select {
+        /* Masquer uniquement le Bootstrap Select original des catégories, pas notre bouton custom */
+        #listeo-search-form_tax-listing_category .bootstrap-select:not(.bringueuses-custom-select) {
             display: none !important;
         }
 
@@ -328,23 +328,25 @@ function bringueuses_get_modal_js() {
             // SOLUTION: Cacher uniquement le Bootstrap Select des catégories et créer notre bouton
             console.log('Masquage du Bootstrap Select des catégories et création du bouton personnalisé');
 
-            // Cacher uniquement le Bootstrap Select du champ tax-listing_category
+            // Cacher uniquement le Bootstrap Select original du champ tax-listing_category
             var \$categoryContainer = $('#listeo-search-form_tax-listing_category');
-            \$categoryContainer.find('.bootstrap-select').hide();
+            \$categoryContainer.find('.bootstrap-select:not(.bringueuses-custom-select)').hide();
             \$categoryContainer.find('.dropdown-menu').hide();
 
-            // Créer un bouton qui ressemble exactement au Bootstrap Select original
-            var customButton = $('<button>', {
-                type: 'button',
-                class: 'btn dropdown-toggle btn-default',
-                html: '<span class=\"filter-option pull-left\">Que recherchez-vous ?</span>&nbsp;<span class=\"bs-caret\"><span class=\"caret\"></span></span>'
-            });
+            // Créer une structure complète Bootstrap Select pour apparence identique
+            var customButtonHtml = '<div class=\"btn-group bootstrap-select show-tick bringueuses-custom-select\">' +
+                '<button type=\"button\" class=\"btn dropdown-toggle bs-placeholder btn-default\" ' +
+                'data-toggle=\"dropdown\" role=\"button\" title=\"Que recherchez-vous ?\">' +
+                '<span class=\"filter-option pull-left\">Que recherchez-vous ?</span>&nbsp;' +
+                '<span class=\"bs-caret\"><span class=\"caret\"></span></span>' +
+                '</button>' +
+                '</div>';
 
             // Insérer le bouton dans le container des catégories uniquement
-            \$categoryContainer.prepend(customButton);
+            \$categoryContainer.prepend(customButtonHtml);
             console.log('Bouton personnalisé créé et inséré dans le container des catégories');
 
-            var \$customBtn = \$categoryContainer.find('.dropdown-toggle').first();
+            var \$customBtn = \$categoryContainer.find('.bringueuses-custom-select .dropdown-toggle');
 
             // Clic sur le bouton personnalisé
             \$customBtn.on('click', function(e) {
