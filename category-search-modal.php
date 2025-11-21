@@ -133,6 +133,12 @@ function bringueuses_get_modal_css() {
             cursor: pointer;
             margin: 0;
             accent-color: #007bff;
+            flex-shrink: 0;
+        }
+
+        .bringueuses-category-label input[type="checkbox"]:checked + .bringueuses-category-name {
+            color: #007bff;
+            font-weight: 700;
         }
 
         .bringueuses-category-name {
@@ -202,6 +208,12 @@ function bringueuses_get_modal_css() {
             cursor: pointer;
             margin: 0;
             accent-color: #007bff;
+            flex-shrink: 0;
+        }
+
+        .bringueuses-subcategory-label input[type="checkbox"]:checked + .bringueuses-subcategory-name {
+            color: #007bff;
+            font-weight: 600;
         }
 
         .bringueuses-subcategory-name {
@@ -452,9 +464,20 @@ function bringueuses_get_modal_js() {
 
             // Rendre le titre de la catégorie cliquable pour cocher/décocher
             $('.bringueuses-category-name, .bringueuses-subcategory-name').on('click', function(e) {
+                e.preventDefault();
                 e.stopPropagation();
-                var \$checkbox = $(this).closest('label').find('input[type=\"checkbox\"]');
-                \$checkbox.prop('checked', !\$checkbox.prop('checked')).trigger('change');
+
+                // Trouver la checkbox associée
+                var \$label = $(this).closest('label');
+                var \$checkbox = \$label.find('input[type=\"checkbox\"]');
+
+                // Inverser l'état de la checkbox
+                \$checkbox.prop('checked', !\$checkbox.prop('checked'));
+
+                // Déclencher manuellement l'événement change
+                \$checkbox.trigger('change');
+
+                console.log('Clic sur titre - Checkbox cochée:', \$checkbox.prop('checked'));
             });
 
             // Toggle des sous-catégories avec la flèche
@@ -480,6 +503,24 @@ function bringueuses_get_modal_js() {
                 // Note: On ne coche PAS automatiquement les sous-catégories
             });
 
+            // Gestion des sous-catégories : cocher le parent quand on coche un enfant
+            $('.bringueuses-subcategory-label input[type=\"checkbox\"]').on('change', function() {
+                var \$categoryItem = $(this).closest('.bringueuses-category-item');
+                var \$parentCheckbox = \$categoryItem.find('.bringueuses-category-parent input[type=\"checkbox\"]');
+                var \$allSubCheckboxes = \$categoryItem.find('.bringueuses-subcategory-label input[type=\"checkbox\"]');
+
+                // Si on coche une sous-catégorie, cocher aussi le parent
+                if (this.checked) {
+                    \$parentCheckbox.prop('checked', true);
+                } else {
+                    // Si on décoche et qu'aucune autre sous-catégorie n'est cochée, décocher le parent
+                    var anyChecked = \$allSubCheckboxes.filter(':checked').length > 0;
+                    if (!anyChecked) {
+                        \$parentCheckbox.prop('checked', false);
+                    }
+                }
+            });
+
             // Effacer toutes les sélections
             \$clearBtn.on('click', function(e) {
                 e.preventDefault();
@@ -493,11 +534,20 @@ function bringueuses_get_modal_js() {
                 // Récupérer toutes les catégories sélectionnées
                 var selectedValues = [];
                 $('.bringueuses-category-modal input[type=\"checkbox\"]:checked').each(function() {
-                    selectedValues.push($(this).val());
+                    var value = $(this).val();
+                    var label = $(this).closest('label').find('span').first().text();
+                    selectedValues.push(value);
+                    console.log('Catégorie sélectionnée:', label, '- Valeur:', value);
                 });
+
+                console.log('=== VALEURS ENVOYÉES AU FORMULAIRE ===');
+                console.log('Nombre total:', selectedValues.length);
+                console.log('Valeurs:', selectedValues);
 
                 // Mettre à jour le select original
                 \$originalSelect.val(selectedValues);
+
+                console.log('Select WordPress mis à jour avec:', \$originalSelect.val());
 
                 // Mettre à jour le texte du bouton personnalisé
                 if (selectedValues.length > 0) {
