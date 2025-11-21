@@ -583,11 +583,10 @@ function bringueuses_get_modal_js() {
 
 // Fonction pour générer le HTML de la modal
 function bringueuses_get_modal_html() {
-    // Récupérer les catégories (taxonomy 'listing_category')
-    // IMPORTANT: hide_empty => true pour n'afficher que les catégories avec des annonces
+    // Récupérer toutes les catégories parentes (on va filtrer manuellement)
     $categories = get_terms(array(
         'taxonomy' => 'listing_category',
-        'hide_empty' => true, // N'afficher que les catégories avec annonces
+        'hide_empty' => false, // On récupère tout pour calculer manuellement
         'parent' => 0, // Seulement les catégories parentes
     ));
 
@@ -605,6 +604,27 @@ function bringueuses_get_modal_html() {
 
     if (!empty($categories) && !is_wp_error($categories)) {
         foreach ($categories as $category) {
+            // Récupérer les sous-catégories avec annonces uniquement
+            $subcategories = get_terms(array(
+                'taxonomy' => 'listing_category',
+                'hide_empty' => true, // N'afficher que les sous-catégories avec annonces
+                'parent' => $category->term_id,
+            ));
+
+            // Calculer le total : annonces de la catégorie parente + annonces des sous-catégories
+            $total_count = intval($category->count);
+
+            if (!empty($subcategories) && !is_wp_error($subcategories)) {
+                foreach ($subcategories as $subcat) {
+                    $total_count += intval($subcat->count);
+                }
+            }
+
+            // N'afficher la catégorie que si elle a au moins une annonce (parent ou enfants)
+            if ($total_count === 0) {
+                continue;
+            }
+
             $html .= '<div class="bringueuses-category-item">';
 
             // Catégorie parente
@@ -613,17 +633,9 @@ function bringueuses_get_modal_html() {
             $html .= '<input type="checkbox" value="' . esc_attr($category->slug) . '">';
             $html .= '<div class="bringueuses-category-name">';
             $html .= '<span>' . esc_html($category->name) . '</span>';
-            $html .= '<span class="bringueuses-category-count">' . $category->count . '</span>';
+            $html .= '<span class="bringueuses-category-count">' . $total_count . '</span>';
             $html .= '</div>';
             $html .= '</label>';
-
-            // Récupérer les sous-catégories
-            // N'afficher que les sous-catégories avec des annonces
-            $subcategories = get_terms(array(
-                'taxonomy' => 'listing_category',
-                'hide_empty' => true, // N'afficher que les sous-catégories avec annonces
-                'parent' => $category->term_id,
-            ));
 
             if (!empty($subcategories) && !is_wp_error($subcategories)) {
                 $html .= '<button class="bringueuses-category-toggle" aria-label="Afficher les sous-catégories">▶</button>';
