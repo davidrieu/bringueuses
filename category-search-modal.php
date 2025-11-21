@@ -302,7 +302,19 @@ function bringueuses_get_modal_js() {
             // Variables
             var \$modal = $('#bringueuses-category-modal');
             var \$overlay = $('#bringueuses-modal-overlay');
-            var \$existingBtn = $('.select-taxonomy .btn.dropdown-toggle');
+
+            // Essayer plusieurs sélecteurs pour trouver le bouton
+            var \$existingBtn = $('.select-taxonomy button.dropdown-toggle');
+            if (\$existingBtn.length === 0) {
+                \$existingBtn = $('.select-taxonomy .btn.dropdown-toggle');
+            }
+            if (\$existingBtn.length === 0) {
+                \$existingBtn = $('.select-taxonomy button[data-toggle=\"dropdown\"]');
+            }
+            if (\$existingBtn.length === 0) {
+                \$existingBtn = $('.select-taxonomy .bootstrap-select button');
+            }
+
             var \$closeBtn = $('.bringueuses-modal-close');
             var \$clearBtn = $('.bringueuses-clear-btn');
             var \$submitBtn = $('.bringueuses-submit-btn');
@@ -313,10 +325,28 @@ function bringueuses_get_modal_js() {
             console.log('Bouton existant trouvé:', \$existingBtn.length);
             console.log('Select original trouvé:', \$originalSelect.length);
 
+            // Debug: afficher la structure HTML
+            if (\$existingBtn.length === 0) {
+                console.error('AUCUN BOUTON TROUVE ! Structure HTML:');
+                $('.select-taxonomy').each(function(i) {
+                    console.log('Container', i, ':', this);
+                    console.log('HTML:', $(this).html().substring(0, 500));
+                });
+            }
+
+            // Vérifier qu'on a trouvé le bouton
+            if (\$existingBtn.length === 0) {
+                console.error('ERREUR CRITIQUE: Impossible de trouver le bouton Bootstrap Select');
+                console.log('Essai de tous les boutons dans .select-taxonomy...');
+                \$existingBtn = $('.select-taxonomy button').first();
+                console.log('Bouton de secours trouvé:', \$existingBtn.length);
+            }
+
             // Désactiver complètement Bootstrap Select et intercepter tous les clics
             // Supprimer tous les handlers existants de Bootstrap Select
             \$existingBtn.off('click');
             $('.select-taxonomy .bootstrap-select').off('click');
+            $('.select-taxonomy button').off('click');
             console.log('Handlers Bootstrap Select supprimés');
 
             // Empêcher l'initialisation de Bootstrap Select
@@ -332,8 +362,11 @@ function bringueuses_get_modal_js() {
             }, 100);
             console.log('Surveillance du dropdown activée');
 
-            // Intercepter le clic sur le bouton ET sur le container
-            $('.select-taxonomy .bootstrap-select, .select-taxonomy .btn.dropdown-toggle').on('click', function(e) {
+            // Intercepter le clic sur TOUS les éléments possibles
+            var clickTargets = '.select-taxonomy .bootstrap-select, .select-taxonomy button, .select-taxonomy .btn';
+            console.log('Attachement du gestionnaire sur:', clickTargets);
+
+            $(clickTargets).on('click', function(e) {
                 console.log('*** CLIC DETECTE SUR LE BOUTON ***');
                 console.log('Element cliqué:', this);
 
@@ -356,7 +389,8 @@ function bringueuses_get_modal_js() {
 
                 return false;
             });
-            console.log('Gestionnaire de clic attaché sur:', $('.select-taxonomy .bootstrap-select, .select-taxonomy .btn.dropdown-toggle').length, 'éléments');
+            console.log('Gestionnaire de clic attaché sur:', $(clickTargets).length, 'éléments');
+            console.log('Liste des éléments:', $(clickTargets));
 
             // Fermer la modal
             function closeModal() {
