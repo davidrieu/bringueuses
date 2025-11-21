@@ -246,7 +246,7 @@ function bringueuses_get_modal_css() {
             background-color: #0056b3;
         }
 
-        /* Empêcher l'ouverture du dropdown Bootstrap Select */
+        /* Empecher ouverture du dropdown Bootstrap Select */
         .select-taxonomy .bootstrap-select.open .dropdown-menu {
             display: none !important;
         }
@@ -296,7 +296,7 @@ function bringueuses_get_modal_js() {
                 e.preventDefault();
                 e.stopPropagation();
 
-                // Empêcher l'ouverture du dropdown Bootstrap
+                // Empecher ouverture du dropdown Bootstrap
                 $(this).closest('.bootstrap-select').removeClass('open');
                 $('.bootstrap-select .dropdown-menu').removeClass('open');
 
