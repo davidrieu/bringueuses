@@ -287,11 +287,17 @@ function bringueuses_get_modal_css() {
 function bringueuses_get_modal_js() {
     return "
     jQuery(document).ready(function($) {
+        console.log('=== BRINGUEUSES DEBUG ===');
+        console.log('jQuery chargé:', typeof jQuery !== 'undefined');
+        console.log('Nombre de .select-taxonomy trouvés:', $('.select-taxonomy').length);
+
         // Créer et injecter la modal dans le DOM
         if ($('.select-taxonomy').length && !$('#bringueuses-category-modal').length) {
+            console.log('Condition validée - Injection de la modal');
 
             // Injecter la modal dans le body
             $('body').append('" . addslashes(bringueuses_get_modal_html()) . "');
+            console.log('Modal injectée dans le body');
 
             // Variables
             var \$modal = $('#bringueuses-category-modal');
@@ -302,10 +308,16 @@ function bringueuses_get_modal_js() {
             var \$submitBtn = $('.bringueuses-submit-btn');
             var \$originalSelect = $('#tax-listing_category');
 
+            console.log('Modal trouvée:', \$modal.length);
+            console.log('Overlay trouvé:', \$overlay.length);
+            console.log('Bouton existant trouvé:', \$existingBtn.length);
+            console.log('Select original trouvé:', \$originalSelect.length);
+
             // Désactiver complètement Bootstrap Select et intercepter tous les clics
             // Supprimer tous les handlers existants de Bootstrap Select
             \$existingBtn.off('click');
             $('.select-taxonomy .bootstrap-select').off('click');
+            console.log('Handlers Bootstrap Select supprimés');
 
             // Empêcher l'initialisation de Bootstrap Select
             $('.select-taxonomy .bootstrap-select').removeClass('open').addClass('bringueuses-disabled');
@@ -318,9 +330,13 @@ function bringueuses_get_modal_js() {
                     $('.select-taxonomy .dropdown-menu').hide();
                 }
             }, 100);
+            console.log('Surveillance du dropdown activée');
 
             // Intercepter le clic sur le bouton ET sur le container
             $('.select-taxonomy .bootstrap-select, .select-taxonomy .btn.dropdown-toggle').on('click', function(e) {
+                console.log('*** CLIC DETECTE SUR LE BOUTON ***');
+                console.log('Element cliqué:', this);
+
                 e.preventDefault();
                 e.stopPropagation();
                 e.stopImmediatePropagation();
@@ -328,14 +344,19 @@ function bringueuses_get_modal_js() {
                 // Empecher ouverture du dropdown Bootstrap
                 $(this).closest('.bootstrap-select').removeClass('open');
                 $('.bootstrap-select .dropdown-menu').removeClass('open').hide();
+                console.log('Dropdown fermé');
 
                 // Ouvrir la modal
                 \$overlay.addClass('active');
                 \$modal.addClass('active');
                 $('body').css('overflow', 'hidden');
+                console.log('Modal ouverte - Classes active ajoutées');
+                console.log('Modal visible:', \$modal.is(':visible'));
+                console.log('Overlay visible:', \$overlay.is(':visible'));
 
                 return false;
             });
+            console.log('Gestionnaire de clic attaché sur:', $('.select-taxonomy .bootstrap-select, .select-taxonomy .btn.dropdown-toggle').length, 'éléments');
 
             // Fermer la modal
             function closeModal() {
@@ -420,6 +441,12 @@ function bringueuses_get_modal_js() {
                 });
                 \$existingBtn.find('.filter-option').text(currentValues.length + ' catégorie(s) sélectionnée(s)');
             }
+
+            console.log('=== INITIALISATION TERMINEE ===');
+        } else {
+            console.error('ERREUR: Conditions non remplies');
+            console.log('.select-taxonomy existe:', $('.select-taxonomy').length > 0);
+            console.log('Modal déjà présente:', $('#bringueuses-category-modal').length > 0);
         }
     });
     ";
